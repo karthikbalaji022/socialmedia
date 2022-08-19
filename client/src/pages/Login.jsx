@@ -1,27 +1,62 @@
-import React from 'react'
-import style from './login.module.scss'
-import styled from 'styled-components'
+import React,{useRef} from 'react';
+import style from './login.module.scss';
+import styled from 'styled-components';
+
+import {passwordValidate,validateUsername} from '../util/validator';
+
 function Login() {
-  return (
+    const password=useRef('');
+    const username=useRef('');
+    function handlePassword(e){
+        const pass=e.target.value;
+        let err=passwordValidate(pass);
+        populateError(password,err);
+    }
+    function handleUsername(e){
+        const user=e.target.value;
+        let err=validateUsername(user);
+        populateError(username,err);
+
+    }
+    function populateError(refrence,message){
+        if(message.length===0)
+        {
+            refrence.current.innerHTML="";
+            refrence.current.innerText="All Good!"
+            refrence.current.style.color="green";
+        }else{
+            refrence.current.innerHTML="";
+            let temp=message.map(item=>`<p>${item}!</p>`)
+            refrence.current.innerHTML=temp.join("");
+            refrence.current.style.color="red";
+        }
+    }
+
+    return (
     <div className={style.loginContainer}>
         <div className={style.loginFormContainer}>
            <styles.h1>
             Login
            </styles.h1>
             <form className={style.loginForm}>
-                <label for="username">
+                <label htmlFor="username">
                     Username:
-                    <styles.input name='username' type="text" placeholder="username" />
+                    <styles.input name='username' type="text" placeholder="username" onChange={handleUsername}/>
+                    <p ref={username}></p>
                 </label>
-                <label for="password">
+                <label htmlFor="password">
                     Password:
-                    <styles.input name='password' type="password" placeholder="password" />
+                    <styles.input name='password' type="password" placeholder="password" onChange={handlePassword}/>
+                    <p ref={password}></p>
                 </label>
                 <section className={style.buttonContainer}>
                 <styles.loginFormSubmit type="submit" >Login</styles.loginFormSubmit>
                 OR
                 <styles.loginFormSubmit type="button" >Login with</styles.loginFormSubmit>
-
+                OR
+                <a href='/register'>
+                    <styles.loginFormSubmit type="button" >Register</styles.loginFormSubmit>
+                </a>
                 </section>
             </form>
         </div>
@@ -66,6 +101,7 @@ const styles={
         color: white;
 
     }
+    margin:3%;
     `
 }
 
